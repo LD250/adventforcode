@@ -34,13 +34,18 @@ def main():
                 if check_new_var:
                     expression[vars] = new_vars
                     op = expression['op']
+                    inited_var = None
                     try:
                         if op == 'AND':
                             pass
                         elif op == 'OR':
                             pass
-                    finally:
+                    except:
                         pass
+                    if inited_var:
+                        init_vars[var] = inited_var
+                        del parsed_code[var]
+            find_a()
 
 
 
