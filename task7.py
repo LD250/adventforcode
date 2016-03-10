@@ -23,10 +23,12 @@ def main():
                 parsed_code[right] = {'vars': [operations[0], operations[2]],
                                     'op': operations[1]}
 
-    def find_a():
+    def find_a(init_vars, parsed_code):
         if 'a' in init_vars:
-            print(init_vars['a'])
+            return init_vars['a']
         else:
+            new_init = dict(init_vars)
+            new_parsed = {}
             for wire, expression in parsed_code.iteritems():
                 new_vars = []
                 check_var_value = False
@@ -36,31 +38,38 @@ def main():
                         check_var_value = True
                     else:
                         new_vars.append(var)
+                op = expression['op']
+                new_parsed[wire] = {'vars': new_vars,
+                                    'op': op}
                 if check_var_value:
-                    expression['vars'] = new_vars
-                    op = expression['op']
+                    #new_parsed['vars'] = 
                     inited_var = None
                     try:
-                        expression['vars'] = [int(v) for v in expression['vars']]
+                        new_vars = [int(v) for v in new_vars]
                         if op == 'AND':
-                            inited_var = expression['vars'][0] & expression['vars'][1]
+                            inited_var = new_vars[0] & new_vars[1]
                         elif op == 'OR':
-                            inited_var = expression['vars'][0] | expression['vars'][1]
+                            inited_var = new_vars[0] | new_vars[1]
                         elif op == 'NOT':
-                            inited_var = ~expression['vars'][0]
+                            inited_var = ~new_vars[0]
                         elif op == 'INT':
-                            inited_var = int(expression['vars'][0])
+                            inited_var = int(new_vars[0])
                         elif op == 'LSHIFT':
-                            inited_var = expression['vars'][0] << expression['vars'][1]
+                            inited_var = new_vars[0] << new_vars[1]
                         elif op == 'RSHIFT':
-                            inited_var = expression['vars'][0] >> expression['vars'][1]
+                            inited_var = new_vars[0] >> new_vars[1]
                     except Exception as e:
                         pass
                     if inited_var is not None:
-                        init_vars[wire] = inited_var
-            find_a()
+                        new_init[wire] = inited_var
+                        del new_parsed[wire]
+            return find_a(new_init, new_parsed)
 
-    find_a()
+    a_wire = find_a(init_vars, parsed_code)
+    print a_wire
+    init_vars['b'] = a_wire
+    new_a_wire = find_a(init_vars, parsed_code)
+    print new_a_wire
 
 if __name__ == "__main__":
     main()
