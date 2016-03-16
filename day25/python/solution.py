@@ -7,7 +7,6 @@ def main():
     max_row = 11
     # To continue, please consult the code grid in the manual.  Enter the code at row 3010, column 3019.
     def find_from(max_row, row, col, value, to_row, to_col):
-        out = False
         while not (col == to_col and row == to_row):
             if row > 1:
                 col += 1
